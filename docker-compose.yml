@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+  # Auth Service
+  auth-service:
+    build: ./backend/auth-service
+    container_name: auth-service
+    ports:
+      - "5001:5001"
+    environment:
+      - MONGO_URL=mongodb://mongo-auth:27017/authdb
+    depends_on:
+      - mongo-auth
+
+  # Product Service
+  product-service:
+    build: ./backend/product-service
+    container_name: product-service
+    ports:
+      - "5002:5002"
+    environment:
+      - MONGO_URL=mongodb://mongo-product:27017/productdb
+    depends_on:
+      - mongo-product
+
+  # Order Service
+  order-service:
+    build: ./backend/order-service
+    container_name: order-service
+    ports:
+      - "5003:5003"
+    environment:
+      - MONGO_URL=mongodb://mongo-order:27017/orderdb
+    depends_on:
+      - mongo-order
+
+  # Payment Service
+  payment-service:
+    build: ./backend/payment-service
+    container_name: payment-service
+    ports:
+      - "5004:5004"
+
+  # Frontend (React + Nginx)
+  ecommerce-frontend:
+    build: ./frontend/ecommerce-frontend
+    container_name: ecommerce-frontend
+    ports:
+      - "3000:80"
+
+  # MongoDB for Auth
+  mongo-auth:
+    image: mongo:6
+    container_name: mongo-auth
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-auth-data:/data/db
+
+  # MongoDB for Product
+  mongo-product:
+    image: mongo:6
+    container_name: mongo-product
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-product-data:/data/db
+
+  # MongoDB for Order
+  mongo-order:
+    image: mongo:6
+    container_name: mongo-order
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo-order-data:/data/db
+
+volumes:
+  mongo-auth-data:
+  mongo-product-data:
+  mongo-order-data:
